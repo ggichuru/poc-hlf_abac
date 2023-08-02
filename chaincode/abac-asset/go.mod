@@ -1,4 +1,4 @@
-module github.com/hyperledger/fabric-samples/asset-transfer-abac/chaincode-go
+module github.com/ggichuru/poc-hlf_abac/chaincode/abac-asset
 
 go 1.17
 

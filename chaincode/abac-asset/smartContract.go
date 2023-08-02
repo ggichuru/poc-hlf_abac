@@ -7,8 +7,8 @@ package main
 import (
 	"log"
 
+	abac "github.com/ggichuru/poc-hlf_abac/chaincode/abac-asset/smart-contract"
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
-	abac "github.com/hyperledger/fabric-samples/asset-transfer-abac/chaincode-go/smart-contract"
 )
 
 func main() {
