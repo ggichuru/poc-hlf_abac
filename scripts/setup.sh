@@ -15,6 +15,8 @@ install_fabric() {
         echo "${ERR} Error setting up fabric. ${IDEA} Check logs"
         exit 1
     fi
+    
+    mkdir ../_cfg
 
     echo
     echo "${DONE} Done Installing HLF"
@@ -33,7 +35,7 @@ setup_testnet () {
         echo
 
         # get the test nework folder from fabric-samples repo
-        cp -R fabric-samples/test-network ./test-network
+        cp -R fabric-samples/test-network ../_cfg/test-network
         if [ $? -ne 0 ]; then
             echo "${ERR} Error setting up test-network. ${IDEA} Check logs"
             exit 1
