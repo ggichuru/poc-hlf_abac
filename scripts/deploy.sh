@@ -119,4 +119,4 @@ copy_testnet_orgs () {
 
 
 deploy_chaincode
-# setup_env
+setup_env

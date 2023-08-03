@@ -15,7 +15,7 @@ source ../scripts/simulate/create_user.sh
 
 #simulations
 createUser1() {
-    user="creator01"
+    user="test01"
     password=$user"pw"
     userType="client"
 
@@ -49,9 +49,10 @@ createAsset() {
 }
 
 # # user.create simulations
-setup_env
+# setup_env
 createUser1
-createUser2
+# createUser2
 
 # asset.create simulations
-createAsset
+# createAsset
+# set_env
