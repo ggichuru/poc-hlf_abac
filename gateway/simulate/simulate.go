@@ -11,65 +11,74 @@ import (
 	"github.com/hyperledger/fabric-gateway/pkg/client"
 )
 
+const (
+	INFO      = "ℹ️ "
+	IDEA      = "💡"
+	DONE      = "✅"
+	ERR       = "❌"
+	ABOVE     = "⬆️"
+	NOT_FOUND = "❗"
+)
+
 /** SMART CONTRACT METHODS*/
 
 func CreateAsset(contract *client.Contract, assetID string) uint64 {
-	fmt.Printf("\n--> Submit transaction: CreateAsset, %s owned by Sam with appraised value 100\n", assetID)
+	fmt.Printf("\n%s --> Submit transaction: CreateAsset, %s with appraised value 100\n", INFO, assetID)
 
 	_, commit, err := contract.SubmitAsync("CreateAsset", client.WithArguments(assetID, "blue", "10", "100"))
 	if err != nil {
-		panic(fmt.Errorf("failed to submit transaction: %w", err))
+		panic(fmt.Errorf("%s failed to submit transaction: %w", ERR, err))
 	}
 
 	status, err := commit.Status()
 	if err != nil {
-		panic(fmt.Errorf("failed to get transaction commit status: %w", err))
+		panic(fmt.Errorf("%s failed to get transaction commit status: %w", ERR, err))
 	}
 
 	if !status.Successful {
-		panic(fmt.Errorf("failed to commit transaction with status code %v", status.Code))
+		panic(fmt.Errorf("%s failed to commit transaction with status code %v", ERR, status.Code))
 	}
 
-	fmt.Println("\n*** CreateAsset committed successfully")
+	fmt.Printf("\n%s *** CreateAsset committed successfully", DONE)
 
 	return status.BlockNumber
 }
 
 func UpdateAsset(contract *client.Contract, assetID string) {
-	fmt.Printf("\n--> Submit transaction: UpdateAsset, %s update appraised value to 200\n", assetID)
+	fmt.Printf("\n%s --> Submit transaction: UpdateAsset, %s update appraised value to 200\n", INFO, assetID)
 
 	_, err := contract.SubmitTransaction("UpdateAsset", assetID, "blue", "10", "200")
 	if err != nil {
-		panic(fmt.Errorf("failed to submit transaction: %w", err))
+		panic(fmt.Errorf("%s failed to submit transaction: %w", ERR, err))
 	}
 
-	fmt.Println("\n*** UpdateAsset committed successfully")
+	fmt.Printf("\n%s *** UpdateAsset committed successfully", DONE)
 }
 
 func TransferAsset(contract *client.Contract, assetID string) {
-	fmt.Printf("\n--> Submit transaction: TransferAsset, %s to Mary\n", assetID)
+	fmt.Printf("\n%s --> Submit transaction: TransferAsset, %s to Mary\n", INFO, assetID)
 
 	_, err := contract.SubmitTransaction("TransferAsset", assetID, "Mary")
 	if err != nil {
 		panic(fmt.Errorf("failed to submit transaction: %w", err))
 	}
 
-	fmt.Println("\n*** TransferAsset committed successfully")
+	fmt.Printf("\n%s *** TransferAsset committed successfully", DONE)
 }
 
 func DeleteAsset(contract *client.Contract, assetID string) {
-	fmt.Printf("\n--> Submit transaction: DeleteAsset, %s\n", assetID)
+	fmt.Printf("\n%s --> Submit transaction: DeleteAsset, %s\n", INFO, assetID)
 
 	_, err := contract.SubmitTransaction("DeleteAsset", assetID)
 	if err != nil {
 		panic(fmt.Errorf("failed to submit transaction: %w", err))
 	}
 
-	fmt.Println("\n*** DeleteAsset committed successfully")
+	fmt.Printf("\n%s *** DeleteAsset committed successfully", DONE)
 }
 
 func GetAllAssets(contract *client.Contract) {
-	fmt.Println("\n--> Submit transaction: Get all assets ")
+	fmt.Printf("\n%s --> Submit transaction: Get all assets ", INFO)
 
 	assets, err := contract.EvaluateTransaction("GetAllAssets")
 	if err != nil {
@@ -77,12 +86,12 @@ func GetAllAssets(contract *client.Contract) {
 	}
 	result := formatJSON(assets)
 	fmt.Println(result)
-	fmt.Println("\n*** GetAllAssets evaluated successfully")
+	fmt.Printf("\n%s *** GetAllAssets evaluated successfully", DONE)
 }
 
 /** CHAINCODE EVENTS FUNCTIONS */
 func StartChaincodeEventListening(ctx context.Context, network *client.Network, ccname string) {
-	fmt.Println("\n*** Start chaincode event listening")
+	fmt.Printf("\n%s *** Start chaincode event listening", INFO)
 
 	events, err := network.ChaincodeEvents(ctx, ccname)
 	if err != nil {
@@ -92,7 +101,7 @@ func StartChaincodeEventListening(ctx context.Context, network *client.Network, 
 	go func() {
 		for event := range events {
 			asset := formatJSON(event.Payload)
-			fmt.Printf("\n<-- Chaincode event received: %s - %s\n", event.EventName, asset)
+			fmt.Printf("\n%s <-- Chaincode event received: %s - %s\n", DONE, event.EventName, asset)
 		}
 	}()
 }

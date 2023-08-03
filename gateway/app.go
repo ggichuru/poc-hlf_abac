@@ -59,7 +59,7 @@ func main() {
 
 	simulate.StartChaincodeEventListening(ctx, network, ccname)
 
-	// simulate.CreateAsset(contract, assetID)
+	simulate.CreateAsset(contract, assetID)
 	// startBlock := simulate.CreateAsset(contract, assetID)
 	// simulate.UpdateAsset(contract, assetID)
 	// simulate.TransferAsset(contract, assetID)
