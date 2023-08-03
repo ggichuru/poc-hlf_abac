@@ -16,16 +16,16 @@ set_env() {
 
 
 create_asset() {
+    set_env
     echo "${INFO} ----> Creating asset1"
-    peer chaincode invoke "${TARGET_TLS_OPTIONS[@]}" -C mychannel -n abac-asset -c '{"function":"CreateAsset","Args":["Asset1","blue","20","100"]}'
+    peer chaincode invoke "${TARGET_TLS_OPTIONS[@]}" -C mychannel -n abac -c '{"function":"CreateAsset","Args":["Asset1","blue","20","100"]}' | jq
     echo "${DONE} ::: Creating asset1"
     echo
 }
 
 query_asset() {
-    set_env
     echo "${INFO} ----> querying asset1"
-    peer chaincode query -C mychannel -n abac-asset -c '{"function":"ReadAsset","Args":["Asset1"]}' || jq
+    peer chaincode query -C mychannel -n abac -c '{"function":"ReadAsset","Args":["Asset1"]}' | jq
     echo "${DONE} ::: Creating asset1"
     echo
 }

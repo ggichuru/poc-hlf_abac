@@ -14,7 +14,10 @@ setup_env() {
     export FABRIC_CA_CLIENT_HOME=${PWD}/organizations/peerOrganizations/org1.example.com/
 }
 
+
 register_user () {
+    set_env
+
     echo
     echo "${INFO} ----> Registering $user."
     #  register an identity named creator1 with the attribute of abac.creator=true

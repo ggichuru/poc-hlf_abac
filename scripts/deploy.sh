@@ -8,7 +8,7 @@ ERR="❌"
 ABOVE="⬆️"
 NOT_FOUND="❗"
 
-cc_name="abac-asset"
+cc_name="abac"
 cc_version=${1:-"1"}
 cc_sequence=${2:-"1"}
 
@@ -27,11 +27,11 @@ setup_env() {
 
 
     # Environment variables for Org1
-    export CORE_PEER_TLS_ENABLED=true
-    export CORE_PEER_LOCALMSPID="Org1MSP"
-    export CORE_PEER_TLS_ROOTCERT_FILE=${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
-    export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
-    export CORE_PEER_ADDRESS=localhost:7051
+    # export CORE_PEER_TLS_ENABLED=true
+    # export CORE_PEER_LOCALMSPID="Org1MSP"
+    # export CORE_PEER_TLS_ROOTCERT_FILE=${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+    # export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+    # export CORE_PEER_ADDRESS=localhost:7051
 
     echo
     echo "${INFO} ---> DEPLOYING CHAINCODE :"
@@ -68,13 +68,13 @@ deploy_ccaas() {
 
     # Deploy chaincode as a service
     echo "${INFO} --> Deploying chaincode as service"
-    ./network.sh deployCCAAS -ccn $cc_name -ccp ../chaincode/$cc_name/  -ccl go -ccv $cc_version -ccs $cc_sequence
+    ./network.sh deployCCAAS -ccn $cc_name -ccp ../chaincode/abac-asset/  -ccl go -ccv $cc_version -ccs $cc_sequence
 }
 
 deploy_cc() {
     # Deploy the chaincode
     echo "${INFO} --> Deploying chaincode"
-    ./network.sh deployCC -ccn $cc_name -ccp ../chaincode/$cc_name/  -ccl go -ccv $cc_version -ccs $cc_sequence
+    ./network.sh deployCC -ccn $cc_name -ccp ../chaincode/abac-asset/  -ccl go -ccv $cc_version -ccs $cc_sequence
 
 }
 
@@ -118,5 +118,5 @@ copy_testnet_orgs () {
 
 
 
-setup_env
 deploy_chaincode
+# setup_env
