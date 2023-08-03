@@ -7,19 +7,18 @@ SPDX-License-Identifier: Apache-2.0
 package main
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
-	"errors"
 	"fmt"
 	"time"
 
 	"github.com/hyperledger/fabric-gateway/pkg/client"
+
+	"gateway/simulate"
 )
 
 const (
-	channelName   = "mychannel"
-	chaincodeName = "abac"
+	channelName = "mychannel"
+	ccname      = "abac"
 )
 
 var now = time.Now()
@@ -50,137 +49,23 @@ func main() {
 	defer gateway.Close()
 
 	network := gateway.GetNetwork(channelName)
-	contract := network.GetContract(chaincodeName)
+	contract := network.GetContract(ccname)
 
 	// Context used for event listening
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// Listen for events emitted by subsequent transactions
-	startChaincodeEventListening(ctx, network)
 
-	// firstBlockNumber := createAsset(contract)
-	// createAsset(contract)
-	// updateAsset(contract)
-	// transferAsset(contract)
-	// deleteAsset(contract)
-	getAllAssets(contract)
+	simulate.StartChaincodeEventListening(ctx, network, ccname)
+
+	// simulate.CreateAsset(contract, assetID)
+	// startBlock := simulate.CreateAsset(contract, assetID)
+	// simulate.UpdateAsset(contract, assetID)
+	// simulate.TransferAsset(contract, assetID)
+	// simulate.DeleteAsset(contract, assetID)
+	simulate.GetAllAssets(contract)
 
 	// Replay events from the block containing the first transaction
-	// replayChaincodeEvents(ctx, network, firstBlockNumber)
-}
-
-func startChaincodeEventListening(ctx context.Context, network *client.Network) {
-	fmt.Println("\n*** Start chaincode event listening")
-
-	events, err := network.ChaincodeEvents(ctx, chaincodeName)
-	if err != nil {
-		panic(fmt.Errorf("failed to start chaincode event listening: %w", err))
-	}
-
-	go func() {
-		for event := range events {
-			asset := formatJSON(event.Payload)
-			fmt.Printf("\n<-- Chaincode event received: %s - %s\n", event.EventName, asset)
-		}
-	}()
-}
-
-func formatJSON(data []byte) string {
-	var result bytes.Buffer
-	if err := json.Indent(&result, data, "", "  "); err != nil {
-		panic(fmt.Errorf("failed to parse JSON: %w", err))
-	}
-	return result.String()
-}
-
-func createAsset(contract *client.Contract) uint64 {
-	fmt.Printf("\n--> Submit transaction: CreateAsset, %s owned by Sam with appraised value 100\n", assetID)
-
-	_, commit, err := contract.SubmitAsync("CreateAsset", client.WithArguments(assetID, "blue", "10", "100"))
-	if err != nil {
-		panic(fmt.Errorf("failed to submit transaction: %w", err))
-	}
-
-	status, err := commit.Status()
-	if err != nil {
-		panic(fmt.Errorf("failed to get transaction commit status: %w", err))
-	}
-
-	if !status.Successful {
-		panic(fmt.Errorf("failed to commit transaction with status code %v", status.Code))
-	}
-
-	fmt.Println("\n*** CreateAsset committed successfully")
-
-	return status.BlockNumber
-}
-
-func updateAsset(contract *client.Contract) {
-	fmt.Printf("\n--> Submit transaction: UpdateAsset, %s update appraised value to 200\n", assetID)
-
-	_, err := contract.SubmitTransaction("UpdateAsset", assetID, "blue", "10", "200")
-	if err != nil {
-		panic(fmt.Errorf("failed to submit transaction: %w", err))
-	}
-
-	fmt.Println("\n*** UpdateAsset committed successfully")
-}
-
-func transferAsset(contract *client.Contract) {
-	fmt.Printf("\n--> Submit transaction: TransferAsset, %s to Mary\n", assetID)
-
-	_, err := contract.SubmitTransaction("TransferAsset", assetID, "Mary")
-	if err != nil {
-		panic(fmt.Errorf("failed to submit transaction: %w", err))
-	}
-
-	fmt.Println("\n*** TransferAsset committed successfully")
-}
-
-func deleteAsset(contract *client.Contract) {
-	fmt.Printf("\n--> Submit transaction: DeleteAsset, %s\n", assetID)
-
-	_, err := contract.SubmitTransaction("DeleteAsset", assetID)
-	if err != nil {
-		panic(fmt.Errorf("failed to submit transaction: %w", err))
-	}
-
-	fmt.Println("\n*** DeleteAsset committed successfully")
-}
-
-func replayChaincodeEvents(ctx context.Context, network *client.Network, startBlock uint64) {
-	fmt.Println("\n*** Start chaincode event replay")
-
-	events, err := network.ChaincodeEvents(ctx, chaincodeName, client.WithStartBlock(startBlock))
-	if err != nil {
-		panic(fmt.Errorf("failed to start chaincode event listening: %w", err))
-	}
-
-	for {
-		select {
-		case <-time.After(10 * time.Second):
-			panic(errors.New("timeout waiting for event replay"))
-
-		case event := <-events:
-			asset := formatJSON(event.Payload)
-			fmt.Printf("\n<-- Chaincode event replayed: %s - %s\n", event.EventName, asset)
-
-			if event.EventName == "DeleteAsset" {
-				// Reached the last submitted transaction so return to stop listening for events
-				return
-			}
-		}
-	}
-}
-
-func getAllAssets(contract *client.Contract) {
-	fmt.Println("\n--> Submit transaction: Get all assets ")
-
-	assets, err := contract.EvaluateTransaction("GetAllAssets")
-	if err != nil {
-		panic(fmt.Errorf("failed to submit transaction: %w", err))
-	}
-	fmt.Println(string(assets))
-	fmt.Println("\n*** GetAllAssets evaluated successfully")
+	// simulate.ReplayChaincodeEvents(ctx, network, startBlock, ccname)
 }
