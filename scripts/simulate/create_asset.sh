@@ -2,7 +2,7 @@
 set -e 
 
 #set env with first user's identity
-set_env() {
+set_asset_env() {
     echo "${INFO} ----> Setting up env with $user identity"
     export CORE_PEER_TLS_ENABLED=true
     export CORE_PEER_LOCALMSPID="Org1MSP"
@@ -16,7 +16,7 @@ set_env() {
 
 
 create_asset() {
-    set_env
+    set_asset_env
     echo "${INFO} ----> Creating asset1"
     peer chaincode invoke "${TARGET_TLS_OPTIONS[@]}" -C mychannel -n abac -c '{"function":"CreateAsset","Args":["Asset1","blue","20","100"]}' | jq
     echo "${DONE} ::: Creating asset1"

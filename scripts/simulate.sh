@@ -13,17 +13,19 @@ cd ../test-network
 # import create user simulation
 source ../scripts/simulate/create_user.sh
 
-#simulations
-createUser1() {
-    user="test01"
-    password=$user"pw"
-    userType="client"
+user=${1:-"userA"}
+password=$user"pw"
+userType="client"
 
+#simulations
+createUser() {
     register_user
     enroll_user
 
     echo
     echo "${DONE} Done :: Registering and Enrolling $user."
+
+    set_asset_env
 }
 
 createUser2() {
@@ -36,6 +38,7 @@ createUser2() {
 
     echo 
     echo "${DONE} Done :: Registering and Enrolling $user."
+
 }
 
 # asset simulations
@@ -50,9 +53,9 @@ createAsset() {
 
 # # user.create simulations
 # setup_env
-createUser1
+# create_creator1
+createUser
 # createUser2
 
 # asset.create simulations
 # createAsset
-# set_env

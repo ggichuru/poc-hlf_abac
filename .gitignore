@@ -29,3 +29,4 @@ external-chaincode/
 
 # test-network
 test-network/
+fabric-samples/

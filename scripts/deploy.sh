@@ -9,6 +9,7 @@ ABOVE="⬆️"
 NOT_FOUND="❗"
 
 cc_name="abac"
+cc_path="../chaincode/abac-asset/"
 cc_version=${1:-"1"}
 cc_sequence=${2:-"1"}
 
@@ -33,12 +34,6 @@ setup_env() {
     # export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
     # export CORE_PEER_ADDRESS=localhost:7051
 
-    echo
-    echo "${INFO} ---> DEPLOYING CHAINCODE :"
-    echo "               -ccn [chaicodeName]        ==      $cc_name"
-    echo "               -ccp [chaicodePackage]     ==      ../contracts/$cc_name"
-    echo "               -ccp [chaicodeLanguage]    ==      go"
-    echo 
 
 }
 
@@ -68,17 +63,23 @@ deploy_ccaas() {
 
     # Deploy chaincode as a service
     echo "${INFO} --> Deploying chaincode as service"
-    ./network.sh deployCCAAS -ccn $cc_name -ccp ../chaincode/abac-asset/  -ccl go -ccv $cc_version -ccs $cc_sequence
+    ./network.sh deployCCAAS -ccn $cc_name -ccp $cc_path -ccl go -ccv $cc_version -ccs $cc_sequence
 }
 
 deploy_cc() {
     # Deploy the chaincode
     echo "${INFO} --> Deploying chaincode"
-    ./network.sh deployCC -ccn $cc_name -ccp ../chaincode/abac-asset/  -ccl go -ccv $cc_version -ccs $cc_sequence
+    ./network.sh deployCC -ccn $cc_name -ccp $cc_path -ccl go -ccv $cc_version -ccs $cc_sequence
 
 }
 
 deploy_chaincode() {
+    echo
+    echo "${INFO} ---> DEPLOYING CHAINCODE :"
+    echo "               -ccn [chaicodeName]        ==      $cc_name"
+    echo "               -ccp [chaicodePackage]     ==      $cc_path"
+    echo "               -ccp [chaicodeLanguage]    ==      go"
+    echo 
     # get chaincode sequence
     sequence=$(peer lifecycle chaincode queryapproved -C mychannel -n $cc_name --output json | jq -r '.sequence')
     
@@ -99,6 +100,8 @@ deploy_chaincode() {
         exit 1
     fi
 
+    echo
+    echo "${DONE} DONE ::: DEPLOYING CHAINCODE."
 }
 
 copy_testnet_orgs () {
