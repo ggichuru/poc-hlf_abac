@@ -8,7 +8,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/hyperledger/fabric-gateway/pkg/client"
@@ -21,11 +20,10 @@ const (
 	ccname      = "abac"
 )
 
-var now = time.Now()
+// var now = time.Now()
+// var assetID = fmt.Sprintf("asset%d", now.Unix()*1e3+int64(now.Nanosecond())/1e6)
 
-var assetID = fmt.Sprintf("asset%d", now.Unix()*1e3+int64(now.Nanosecond())/1e6)
-
-// var assetID = "asset1691085567931"
+var assetID = "asset1691484020387"
 
 func main() {
 	clientConnection := newGrpcConnection()
@@ -56,12 +54,12 @@ func main() {
 	defer cancel()
 
 	// Listen for events emitted by subsequent transactions
-
 	simulate.StartChaincodeEventListening(ctx, network, ccname)
 
-	simulate.CreateAsset(contract, assetID)
+	/** SIMULATIONS */
+	// simulate.CreateAsset(contract, assetID)
 	// startBlock := simulate.CreateAsset(contract, assetID)
-	// simulate.UpdateAsset(contract, assetID)
+	simulate.UpdateAsset(contract, assetID)
 	// simulate.TransferAsset(contract, assetID)
 	// simulate.DeleteAsset(contract, assetID)
 	simulate.GetAllAssets(contract)
